@@ -2,6 +2,71 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.4.5 — 2026-07-31
+
+### Changed (packaging)
+
+- **Added a `files` allowlist to `package.json`.** Installs previously shipped
+  everything not gitignored — `test.js`, `test-e2e.js`, `test-fixes.js`,
+  `tests/`, `AUDIT_REPORT.md`, `SECURITY.md`, `CONTRIBUTING.md` — none of which
+  run at runtime. Installed packages now carry only `index.js`, `setup.js`,
+  `README.md`, `LICENSE`, `NOTICE`, and `CHANGELOG.md`.
+- Smaller installs, and the shipped tree now matches what actually executes.
+
+**Cloning from GitHub is unaffected.** `git clone` still gets the full repo
+including every test, and `npm test` works exactly as before. This only changes
+what a packaged install contains.
+
+No code changes. `index.js` is byte-identical to v1.4.3.
+
+## v1.4.4 — 2026-07-30
+
+### Changed (docs / licensing)
+
+- **Contributor license grant added to `CONTRIBUTING.md`.** The old wording was
+  inbound=outbound: contributions came in under ELv2, the same license the repo
+  ships under. That is fine for a permissive license and wrong for a restricted
+  one — ELv2 bars offering the software as a hosted or managed service, so
+  contributed code carried that restriction into the project itself, and donated
+  lines could block the maintainer from running a hosted version.
+- Contributors now keep their copyright and grant the maintainer a perpetual,
+  irrevocable, royalty-free license covering commercial and hosted-service use.
+  Contributions are still published publicly under ELv2.
+- **Self-hosting is unchanged: free, unrestricted, all 160 tools.** This affects
+  contributors only, and only from this release forward.
+- **New `.github/pull_request_template.md`** with sanity-check items and an
+  agreement checkbox, so the grant is acknowledged per PR instead of buried in
+  CONTRIBUTING.
+
+No code changes. `index.js` is byte-identical to v1.4.3.
+
+## v1.4.3 — 2026-07-24
+
+### Fixed (test-only)
+
+- **`npm test` no longer reports a pass on an invalid API key** (PR #4, thanks
+  @drew778) — the read-only check accepted any non-empty object, including FUB's
+  401 error payload. Follow-up: the identity-field check now also accepts the
+  `{ account: { id, domain, owner } }` response shape, which real accounts
+  return and which the PR's stricter check missed.
+
+## v1.4.2 — 2026-07-24
+
+### Changed
+
+- **`recordingUrl` now explains itself instead of teasing.** FUB masks call
+  recording URLs at the API level for every integration (`* Recording URL is
+  hidden for privacy reasons *`) and has confirmed they will never be exposed
+  through the API. That mystery string kept generating "can you unhide it?"
+  support questions (issue #2). The call tools (`listCalls`, `getCall`,
+  `createCall`, `updateCall`) now replace any masked value with a note that
+  states the reality and points to the README.
+- **`recordingUrl` removed from `createCall`/`updateCall` inputs.** Verified
+  live: a URL written to a call comes back masked -- writing the field is a
+  black hole. Legacy callers that still send it are silently tolerated
+  (`translateCallArgs` drops it) instead of erroring.
+- README: new FAQ entry "Where are the call recording URLs?"
+
 ## v1.4.1 — 2026-07-18
 
 ### Fixed (bug)
